@@ -1,0 +1,5 @@
+apiVersion: v2
+name: cluedin-data-quality-metrics-extension
+description: Scheduled data quality metrics for a CluedIn instance.
+
+version: 0.2.0

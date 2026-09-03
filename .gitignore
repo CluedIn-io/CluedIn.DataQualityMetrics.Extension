@@ -1,0 +1,11 @@
+__pycache__
+.context
+.DS_Store
+.env
+*.todo
+venv
+entities.json
+
+# Local, instance-specific configuration.
+config/metrics.json
+values.local.yaml

@@ -1,0 +1,39 @@
+# Container image. The Makefile overrides repository and tag.
+image:
+  repository: "localhost:5000/cluedin-data-quality-metrics-extension"
+  tag: "latest"
+  pullPolicy: "Always"
+
+# Names of image pull secrets, if the registry needs one.
+imagePullSecrets: []
+
+# Name of the Kubernetes Secret holding the credentials. Its keys must be:
+#   access_token, sql_server, sql_database, sql_user, sql_password, metrics_table
+# Create it with `make create-metrics-secret`.
+secretName: ""
+
+# Non-secret CluedIn connection settings.
+cluedin:
+  domain: ""
+  org_name: ""
+  verify_tls: "true"
+
+# Schedule for the metrics CronJob.
+metrics:
+  schedule: "0 * * * *"
+  ttlSecondsAfterFinished: 3600
+  backoffLimit: 1
+  # Set to true to calculate and log the metrics without writing to SQL Server.
+  dryRun: false
+
+resources: {}
+nodeSelector: {}
+tolerations: []
+affinity: {}
+
+# The metrics configuration, mounted into the container as metrics.json.
+# Keep it out of this file: put it in your own values file and pass `-f`, or pass
+# the JSON as a string with `--set-file metricsConfigJson=config/metrics.json`.
+# See the Parameters section of README.md for every option.
+metricsConfig: {}
+metricsConfigJson: ""

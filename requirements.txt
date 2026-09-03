@@ -1,0 +1,12 @@
+certifi==2023.5.7
+charset-normalizer==3.1.0
+cluedin==2.2.0
+idna==3.4
+# NB: This pymssql version could have problems with Apple Silicon processors:
+# - https://github.com/pymssql/pymssql/issues/705#issuecomment-1067462256
+# - https://stackoverflow.com/questions/44958536/how-to-install-pymssql-on-macos-sierra#answer-66176998
+# If this is the case, use 2.1.5 instead.
+pymssql==2.2.7
+python-dotenv==1.0.0
+requests==2.31.0
+urllib3==2.0.3

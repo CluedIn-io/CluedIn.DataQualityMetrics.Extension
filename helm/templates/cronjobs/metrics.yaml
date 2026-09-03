@@ -1,0 +1,113 @@
+{{- $name := include "name" . -}}
+{{- $secret := .Values.secretName | default $name -}}
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ $name }}
+  labels:
+    {{- include "labels" . | nindent 4 }}
+spec:
+  schedule: {{ .Values.metrics.schedule | quote }}
+  jobTemplate:
+    spec:
+      ttlSecondsAfterFinished: {{ .Values.metrics.ttlSecondsAfterFinished }}
+      template:
+        metadata:
+          labels:
+            {{- include "labels" . | nindent 12 }}
+        spec:
+          containers:
+            - name: metrics
+              image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default "latest" }}"
+              imagePullPolicy: {{ .Values.image.pullPolicy | default "Always" }}
+              env:
+                - name: PYTHONUNBUFFERED
+                  value: "true"
+                - name: METRICS_CONFIG
+                  value: /etc/cluedin-metrics/metrics.json
+                - name: CLUEDIN_DOMAIN
+                  valueFrom:
+                    configMapKeyRef:
+                      name: {{ $name }}
+                      key: domain
+                - name: CLUEDIN_ORG_NAME
+                  valueFrom:
+                    configMapKeyRef:
+                      name: {{ $name }}
+                      key: org_name
+                - name: CLUEDIN_VERIFY_TLS
+                  valueFrom:
+                    configMapKeyRef:
+                      name: {{ $name }}
+                      key: verify_tls
+                - name: CLUEDIN_ACCESS_TOKEN
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ $secret }}
+                      key: access_token
+                - name: METRICS_SQL_SERVER
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ $secret }}
+                      key: sql_server
+                - name: METRICS_SQL_DATABASE
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ $secret }}
+                      key: sql_database
+                - name: METRICS_SQL_USER
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ $secret }}
+                      key: sql_user
+                - name: METRICS_SQL_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ $secret }}
+                      key: sql_password
+                - name: METRICS_TABLE
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ $secret }}
+                      key: metrics_table
+              command:
+                - python
+                - ./metrics.py
+                {{- if .Values.metrics.dryRun }}
+                - --dry-run
+                {{- end }}
+              volumeMounts:
+                - name: metrics-config
+                  mountPath: /etc/cluedin-metrics
+                  readOnly: true
+              {{- with .Values.resources }}
+              resources:
+                {{- toYaml . | nindent 16 }}
+              {{- end }}
+          volumes:
+            - name: metrics-config
+              configMap:
+                name: {{ $name }}
+                items:
+                  - key: metrics.json
+                    path: metrics.json
+          restartPolicy: Never
+          {{- with .Values.imagePullSecrets }}
+          imagePullSecrets:
+            {{- range . }}
+            - name: {{ . | quote }}
+            {{- end }}
+          {{- end }}
+          {{- with .Values.nodeSelector }}
+          nodeSelector:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.tolerations }}
+          tolerations:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.affinity }}
+          affinity:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+      backoffLimit: {{ .Values.metrics.backoffLimit | default 1 }}

@@ -1,0 +1,153 @@
+{
+  "title": "Data Quality Metrics",
+
+  "page_size": 10000,
+  "missing_value": "N/A",
+
+  "reference_sets": {
+    "country_codes": {
+      "entity_type": "/Example/Country",
+      "key": "example.country.code",
+      "ignore_values": ["N/A"]
+    },
+    "region_names": {
+      "entity_type": "/Example/Region",
+      "key": "example.region.name"
+    },
+    "location_names": {
+      "entity_type": "/Example/Location",
+      "key": "example.location.name"
+    }
+  },
+
+  "entity_types": [
+    {
+      "entity_type": "/Example/Location",
+      "label": "Locations",
+      "metrics": {
+        "accuracy": [
+          { "key": "example.location.longitude", "rule": "longitude" },
+          { "key": "example.location.latitude", "rule": "latitude" },
+          { "key": "example.location.latSeconds", "rule": "number", "min": 0, "max": 60 },
+          {
+            "key": "example.location.gmtTimeZoneDiff",
+            "rule": "number", "min": -11, "max": 13
+          },
+          {
+            "key": "example.location.code",
+            "rule": "regex", "pattern": "[A-Z]{5}"
+          },
+          {
+            "key": "example.location.supportedType",
+            "rule": "allowed_values",
+            "values": ["Closed Loop", "Open Loop", "N/A", "Info N/A"]
+          }
+        ],
+
+        "completeness": [
+          "example.location.id",
+          "example.location.name",
+          "example.location.countryCode",
+          "example.location.countryName",
+          "example.location.latitude",
+          "example.location.longitude",
+          "example.location.regionName"
+        ],
+
+        "consistency": [
+          {
+            "key": "example.location.directionFlag",
+            "rule": "allowed_values",
+            "values": ["East", "West"]
+          },
+          {
+            "keys": ["example.location.countryName", "source.location.countryName"],
+            "rule": "equal"
+          },
+          {
+            "key": "example.location.regionName",
+            "rule": "in_reference_set",
+            "reference_set": "region_names"
+          }
+        ],
+
+        "integrity": [
+          {
+            "key": "example.location.countryCode",
+            "rule": "in_reference_set",
+            "reference_set": "country_codes"
+          }
+        ],
+
+        "uniqueness": [
+          "example.location.id",
+          "example.location.name",
+          {
+            "keys": ["example.location.longitude", "example.location.latitude"]
+          }
+        ]
+      }
+    },
+
+    {
+      "entity_type": "/Example/Route",
+      "label": "Routes",
+      "metrics": {
+        "accuracy": [
+          {
+            "key": "example.route.durationMin",
+            "rule": "number", "exclusive_min": 0
+          },
+          {
+            "key": "example.route.durationMax",
+            "rule": "number", "exclusive_min": 0
+          },
+          { "key": "example.route.commission", "rule": "number", "min": 0 }
+        ],
+
+        "completeness": [
+          "example.route.key",
+          "example.route.name",
+          "example.route.sourceSystem"
+        ],
+
+        "consistency": [
+          {
+            "key": "example.route.originName",
+            "rule": "in_reference_set",
+            "reference_set": "location_names"
+          },
+          {
+            "key": "example.route.destinationName",
+            "rule": "in_reference_set",
+            "reference_set": "location_names"
+          }
+        ],
+
+        "uniqueness": [
+          "example.route.key"
+        ]
+      }
+    }
+  ],
+
+  "dynamic_metrics": {
+    "enabled": true,
+    "vocabulary_key_prefix": "metric",
+    "true_values": ["true"]
+  },
+
+  "sql": {
+    "table": "dbo.MetricHistory",
+    "columns": {
+      "id": "GDQMId",
+      "name": "MetricName",
+      "value": "MetricValue",
+      "info": "MetricInfo",
+      "created_date": "DWCreatedDate",
+      "created_by": "DWCreatedBy",
+      "modified_date": "DWModifiedDate",
+      "modified_by": "DWModifiedBy"
+    }
+  }
+}

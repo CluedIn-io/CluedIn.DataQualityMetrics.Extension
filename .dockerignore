@@ -1,0 +1,13 @@
+.vscode
+*.ipynb
+notebooks
+helm
+scripts
+Makefile
+README.md
+venv
+.env
+.git
+.github
+config/metrics.json
+values.local.yaml
