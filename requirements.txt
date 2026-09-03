@@ -8,5 +8,5 @@ idna==3.4
 # If this is the case, use 2.1.5 instead.
 pymssql==2.2.7
 python-dotenv==1.0.0
-requests==2.31.0
+requests==2.33.0
 urllib3==2.0.3
