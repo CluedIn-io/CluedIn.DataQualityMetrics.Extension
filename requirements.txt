@@ -1,7 +1,7 @@
 certifi==2023.5.7
 charset-normalizer==3.1.0
 cluedin==2.2.0
-idna==3.4
+idna==3.15
 # NB: This pymssql version could have problems with Apple Silicon processors:
 # - https://github.com/pymssql/pymssql/issues/705#issuecomment-1067462256
 # - https://stackoverflow.com/questions/44958536/how-to-install-pymssql-on-macos-sierra#answer-66176998
