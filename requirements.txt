@@ -7,6 +7,6 @@ idna==3.4
 # - https://stackoverflow.com/questions/44958536/how-to-install-pymssql-on-macos-sierra#answer-66176998
 # If this is the case, use 2.1.5 instead.
 pymssql==2.2.7
-python-dotenv==1.0.0
+python-dotenv==1.2.2
 requests==2.31.0
 urllib3==2.0.3
