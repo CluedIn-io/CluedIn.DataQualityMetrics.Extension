@@ -9,4 +9,4 @@ idna==3.4
 pymssql==2.2.7
 python-dotenv==1.0.0
 requests==2.31.0
-urllib3==2.0.3
+urllib3==2.7.0
