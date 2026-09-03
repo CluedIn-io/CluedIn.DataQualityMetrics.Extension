@@ -1,4 +1,4 @@
-# cluedin-data-quality-metrics-extension
+# CluedIn.DataQualityMetrics.Extension
 
 **Scheduled data quality metrics for a CluedIn instance.**
 
